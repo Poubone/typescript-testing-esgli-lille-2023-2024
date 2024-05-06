@@ -4,6 +4,7 @@ import { createArticle, deleteArticle, getAllArticles, getArticle } from "./cont
 import { createOrder, deleteOrder, getAllOrder, getOrder, submitingOrder } from "./controllers/OrderController";
 import { Article } from "./Article";
 import { getNewDataSource } from "./config/database";
+import { Order } from './Order';
 
 const app = express();
 
@@ -29,13 +30,14 @@ async function main() {
   console.log("💾 Successfully connected to database.");
 
   await Article.createBaseArticles();
-  console.log("Successfully created articles.");
+  await Order.createBaseOrders();
 
-  // Start HTTP server…
+ 
+
   const server = http.createServer(app);
 
-  server.listen(3000, () => {
-    console.log('Server listening on port 3000');
+  server.listen(3000, async () => {
+    await console.log('Server listening on port 3000');
   });
 }
 
