@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../index'; // Import your Express application
+import { app } from '../index'; 
 import { Order } from '../Order';
 import { DataSource } from "typeorm";
 import { Article } from '../Article';

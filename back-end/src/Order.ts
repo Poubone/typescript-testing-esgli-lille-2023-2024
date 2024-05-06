@@ -25,7 +25,6 @@ export class Order extends BaseEntity {
 
 
   static async createBaseOrders(): Promise<void> {
-    // Let's assume that base articles have been created and are available in the database
     const articles = await Article.find();
 
     if (articles.length === 0) {
@@ -58,7 +57,7 @@ export class Order extends BaseEntity {
         await articleInOrder.save();
       }
     }
-   
+
   }
 
   static async createOrder(
@@ -97,20 +96,20 @@ export class Order extends BaseEntity {
     return this.articlesInOrder.reduce(
       (total, { article, quantity }) => total + article.priceEurCent * quantity,
       0
-    ) ;
-  }  
+    );
+  }
 
   getShippingCost(): number {
-    return this.getTotalPrice() >= 10000 
+    return this.getTotalPrice() >= 10000
       ? 0
       : this.articlesInOrder.reduce(
-          (total, { article, quantity }) =>
-            total +
-            ((article.specialShippingCostEurCent || (article.weightG * 10)) * quantity),
-          0
-        );
+        (total, { article, quantity }) =>
+          total +
+          ((article.specialShippingCostEurCent || (article.weightG * 10)) * quantity),
+        0
+      );
   }
-  
+
 
   getOrderCost(): {
     totalWithoutShipping: number;

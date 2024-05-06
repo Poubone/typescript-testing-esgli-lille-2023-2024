@@ -1,6 +1,6 @@
 import request from 'supertest';
-import{app} from '../index';  // Make sure to adjust this import to the actual location of your Express app
-import { Article } from '../Article';  // Adjust path as necessary
+import{app} from '../index';  
+import { Article } from '../Article'; 
 import { DataSource } from 'typeorm';
 import { getNewDataSource } from '../config/database';
 
