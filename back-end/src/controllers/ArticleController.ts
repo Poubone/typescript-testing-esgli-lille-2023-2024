@@ -28,13 +28,21 @@ export const getAllArticles = async (req: Request, res: any) => {
 };
 
 export const getArticle = async (req: Request, res: any) => {
-    const article = await Article.find({where : {id : req.params.id}})
-    res.send(JSON.stringify(article))
+    const article = await Article.findOne({where : {id : req.params.id}})
+    if(article !== null){
+        res.send(JSON.stringify(article))
+    } else {
+        res.status(404).send("Article non trouvée")
+    }
 };
 
 export const deleteArticle = async (req: Request, res: any) => {
-    const article = await Article.find({where : {id : req.params.id}})
-    await Article.remove(article).then(
-        res.send("Article supprimé").status(200)
-    )
+    const article = await Article.findOne({where : {id : req.params.id}})
+    if(article !== null){
+        await Article.remove(article).then(
+            res.status(200).send("Article supprimé")
+        )
+    } else {
+        res.status(404).send("Article non trouvée")
+    }  
 };

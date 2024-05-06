@@ -17,23 +17,29 @@ export class Order extends BaseEntity {
 
   @OneToMany(() => ArticleInOrder, (articleInOrder) => articleInOrder.order, {
     eager: true,
+    onDelete: "CASCADE"
   })
   articlesInOrder!: ArticleInOrder[];
 
   @Column({ default: false })
   submitted!: boolean;
 
+  @Column()
+  createdAt!: Date;
+
   static async createOrder(
     articlesInOrder: { articleId: string; quantity: number }[]
   ): Promise<Order> {
+    console.log(articlesInOrder)
     for (const { articleId } of articlesInOrder) {
       const article = await Article.findOne({ where: { id: articleId } });
       if (!article) {
         throw new Error(`Article with ID ${articleId} not found.`);
       }
     }
-
+    
     const order = Order.create();
+    order.createdAt = new Date()
     await order.save();
 
     for (const { articleId, quantity } of articlesInOrder) {
@@ -44,12 +50,11 @@ export class Order extends BaseEntity {
       articleInOrder.quantity = quantity;
       await articleInOrder.save();
     }
-
     await order.reload();
     return order;
   }
 
-  async submitOrder() {
+  public async submitOrder() {
     this.submitted = true;
     await this.save();
     sendEmail();

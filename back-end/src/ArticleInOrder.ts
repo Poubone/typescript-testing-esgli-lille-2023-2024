@@ -13,7 +13,9 @@ export class ArticleInOrder extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ManyToOne(() => Order, (order) => order.articlesInOrder)
+  @ManyToOne(() => Order, (order) => order.articlesInOrder, {
+    onDelete: "CASCADE"
+  })
   order!: Order;
 
   @ManyToOne(() => Article, (article) => article.ordersWithArticle, {

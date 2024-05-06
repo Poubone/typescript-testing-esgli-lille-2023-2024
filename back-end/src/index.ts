@@ -1,6 +1,7 @@
 import { Article } from "./Article";
 import { getNewDataSource } from "./config/database";
 import { createArticle, deleteArticle, getAllArticles, getArticle } from "./controllers/ArticleController";
+import { createOrder, deleteOrder, getAllOrder, getOrder, submitingOrder } from "./controllers/OrderController";
 
 async function main() {
   const dataSource = await getNewDataSource("./sqlite.db");
@@ -25,6 +26,13 @@ async function main() {
   app.get('/articles', getAllArticles);
   app.get('/article/:id', getArticle);
   app.delete('/article/:id', deleteArticle);
+  
+  
+  app.post('/order', createOrder);
+  app.get('/orders', getAllOrder);
+  app.get('/order/:id', getOrder);
+  app.get('/order/:id/submit', submitingOrder);
+  app.delete('/order/:id', deleteOrder);
 
   const server = http.createServer(app);
 
