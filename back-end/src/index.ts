@@ -8,19 +8,25 @@ async function main() {
   await Article.createBaseArticles();
   console.log("Successfully created articles.");
 
-  // start HTTP server…
+  // start HTTP server…  
+  const express = require('express');
   const http = require('http');
 
-  const server = http.createServer((req: Request, res: any) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello from Node.js!');
+  const app = express();
+
+  app.get('/', (req: Request, res: any) => {
+    res.send('Hello from the homepage!');
   });
+
+  app.get('/users', (req: Request, res: any) => {
+    res.send('This is the users route!');
+  });
+
+  const server = http.createServer(app);
 
   server.listen(3000, () => {
     console.log('Server listening on port 3000');
   });
-  
 }
 
 main();
