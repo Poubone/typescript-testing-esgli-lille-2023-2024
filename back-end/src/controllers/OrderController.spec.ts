@@ -9,7 +9,7 @@ let dataSource: DataSource;
 
 beforeEach(async () => {
     dataSource = await getNewDataSource(":memory:");
-    await dataSource.initialize();
+
     await dataSource.synchronize();
     await Article.createBaseArticles();
     await Order.createBaseOrders();
@@ -24,31 +24,48 @@ afterEach(async () => {
 describe('Order Controller', () => {
    describe('GET /orders', () => {
     it('should return all orders', async () => {
-        const mockOrders = [{ id: '1', total: 100 }, { id: '2', total: 150 }];
-        Order.find = jest.fn().mockResolvedValue(mockOrders); // Uncomment and ensure this is executed before the request
+        const articles = await Article.find();
 
+        const orderData = [
+            {
+              articles: [
+                { article: articles[0], quantity: 2 },
+                { article: articles[1], quantity: 1 }
+              ]
+            },
+            {
+              articles: [
+                { article: articles[0], quantity: 1 },
+              ]
+            }
+          ];
+        Order.find = jest.fn().mockResolvedValue(orderData); 
+        
         const response = await request(app).get('/orders');
+ 
         expect(response.status).toBe(200);
-        expect(response.body).toEqual(mockOrders);
+        expect(response.body).toEqual(orderData);
     });
 });
 
-    describe('GET /order/:id', () => {
-        it('should return a single order if it exists', async () => {
-            const mockOrder = { id: '1', total: 100 };
-            Order.findOne = jest.fn().mockResolvedValue(mockOrder);
-            const response = await request(app).get('/order/1');
-            expect(response.status).toBe(200);
-            expect(response.body).toEqual(mockOrder);
-        });
+describe('GET /order/:id', () => {
+    it('should return a single order if it exists', async () => {
+        const mockOrder = { id: '1', total: 100 };
+        Order.findOne = jest.fn().mockResolvedValue(mockOrder);
 
-        it('should return 404 if the order does not exist', async () => {
-            Order.findOne = jest.fn().mockResolvedValue(null);
-            const response = await request(app).get('/order/999');
-            expect(response.status).toBe(404);
-            expect(response.text).toContain('Commande non trouvée');
-        });
+        const response = await request(app).get('/order/1');
+       await console.log('Response body:', response.body); // Add this to see what is actually returned
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(mockOrder);
     });
+
+    it('should return 404 if the order does not exist', async () => {
+        Order.findOne = jest.fn().mockResolvedValue(null);
+        const response = await request(app).get('/order/999');
+        expect(response.status).toBe(404);
+        expect(response.text).toContain('Commande non trouvée');
+    });
+});
 
     describe('POST /order', () => {
         it('should create an order', async () => {

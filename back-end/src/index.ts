@@ -36,9 +36,11 @@ async function main() {
 
   const server = http.createServer(app);
 
-  server.listen(3000, async () => {
-    await console.log('Server listening on port 3000');
-  });
+  server.listen(0, () => {
+    const address = server.address();
+    const port = typeof address === "string" ? address : address?.port;
+    console.log(`Server listening on port ${port}`);
+});
 }
 
 main();

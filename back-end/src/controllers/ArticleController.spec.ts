@@ -8,13 +8,16 @@ import { getNewDataSource } from '../config/database';
 let dataSource: DataSource;
 beforeEach(async () => {
     dataSource = await getNewDataSource(":memory:");
+
+    await dataSource.synchronize();
+    await Article.createBaseArticles();
+   // await Order.createBaseOrders();
 });
 
-  
-  afterEach(async () => {
+afterEach(async () => {
     if (dataSource.isInitialized) {
-        await dataSource.synchronize(false); // Optional: Clear data if necessary
-        await dataSource.close(); // Ensures the database is closed properly
+        await dataSource.dropDatabase();
+        await dataSource.destroy();
     }
 });
 describe('Article Controller', () => {
