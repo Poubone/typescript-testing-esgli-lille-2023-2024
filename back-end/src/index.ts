@@ -44,7 +44,7 @@ async function main() {
 
   const server = http.createServer(app);
 
-  server.listen(0, () => {
+  server.listen(3000, () => {
     const address = server.address();
     const port = typeof address === "string" ? address : address?.port;
     console.log(`Server listening on port ${port}`);
