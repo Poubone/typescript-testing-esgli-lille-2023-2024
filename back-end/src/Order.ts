@@ -57,21 +57,22 @@ export class Order extends BaseEntity {
 
   private getTotalPrice(): number {
     return this.articlesInOrder.reduce(
-      (total, { article, quantity }) => total + article.priceEur * quantity,
+      (total, { article, quantity }) => total + article.priceEurCent * quantity,
       0
-    );
-  }
+    ) ;
+  }  
 
   getShippingCost(): number {
-    return this.getTotalPrice() >= 100
+    return this.getTotalPrice() >= 10000 
       ? 0
       : this.articlesInOrder.reduce(
           (total, { article, quantity }) =>
             total +
-            (article.specialShippingCost || article.weightKg * 10) * quantity,
+            ((article.specialShippingCostEurCent || (article.weightG * 10)) * quantity),
           0
         );
   }
+  
 
   getOrderCost(): {
     totalWithoutShipping: number;
