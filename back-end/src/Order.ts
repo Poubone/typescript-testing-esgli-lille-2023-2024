@@ -30,7 +30,6 @@ export class Order extends BaseEntity {
   static async createOrder(
     articlesInOrder: { articleId: string; quantity: number }[]
   ): Promise<Order> {
-    console.log(articlesInOrder)
     for (const { articleId } of articlesInOrder) {
       const article = await Article.findOne({ where: { id: articleId } });
       if (!article) {

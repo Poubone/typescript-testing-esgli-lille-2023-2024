@@ -29,7 +29,7 @@ export const submitingOrder = async (req: Request, res: any) => {
 
 export const createOrder = async (req: Request, res: any) => {
     if(req.body !== null && req.body !== undefined){
-        Order.createOrder(req.body).then(
+        Order.createOrder(req.body.data).then(
             res.status(200).send("Commande enregistrée")
         )
     }

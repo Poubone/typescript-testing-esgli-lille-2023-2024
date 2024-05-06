@@ -23,6 +23,24 @@ export const createArticle = async (req: Request, res: any) => {
     }
 };
 
+export const updateArticle = async (req: Request, res: any) => {
+    if(req.body !== null && req.body !== undefined){
+        const data: ArticlePost = req.body
+        const article = await Article.findOne({where: {id: req.params.id}})
+        if(article !== null && article !== undefined){
+            article.name = data.name;
+            article.priceEurCent = data.priceEurCent
+            article.weightG = data.weightG
+            if(data.specialShippingCostEurCent){
+                article.specialShippingCostEurCent = data.specialShippingCostEurCent
+            }
+            article.save();
+        }
+        
+        res.send("Article enregistré").status(200)
+    }
+};
+
 export const getAllArticles = async (req: Request, res: any) => {
     const articles = await Article.find()
     res.send(JSON.stringify(articles))
@@ -31,7 +49,7 @@ export const getAllArticles = async (req: Request, res: any) => {
 export const getArticle = async (req: Request, res: any) => {
     const article = await Article.findOne({where : {id : req.params.id}})
     if(article !== null){
-        res.send(JSON.stringify(article))
+        res.status(200).send(JSON.stringify(article))
     } else {
         res.status(404).send("Article non trouvée")
     }
