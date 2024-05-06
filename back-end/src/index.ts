@@ -1,5 +1,6 @@
 import { Article } from "./Article";
 import { getNewDataSource } from "./config/database";
+import { createArticle } from "./controllers/ArticleController";
 
 async function main() {
   const dataSource = await getNewDataSource("./sqlite.db");
@@ -18,9 +19,7 @@ async function main() {
     res.send('Hello from the homepage!');
   });
 
-  app.get('/users', (req: Request, res: any) => {
-    res.send('This is the users route!');
-  });
+  app.get('/users', createArticle);
 
   const server = http.createServer(app);
 
