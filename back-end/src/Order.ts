@@ -17,15 +17,48 @@ export class Order extends BaseEntity {
 
   @OneToMany(() => ArticleInOrder, (articleInOrder) => articleInOrder.order, {
     eager: true,
-    onDelete: "CASCADE"
   })
   articlesInOrder!: ArticleInOrder[];
 
   @Column({ default: false })
   submitted!: boolean;
 
-  @Column()
-  createdAt!: Date;
+
+  static async createBaseOrders(): Promise<void> {
+    const articles = await Article.find();
+
+    if (articles.length === 0) {
+      console.warn("No articles found in database. Ensure base articles are created first.");
+      return;
+    }
+
+    const orderData = [
+      {
+        articles: [
+          { article: articles[0], quantity: 2 },
+          { article: articles[1], quantity: 1 }
+        ]
+      },
+      {
+        articles: [
+          { article: articles[0], quantity: 1 },
+        ]
+      }
+    ];
+
+    for (const data of orderData) {
+      const order = new Order();
+      await order.save();
+      for (const { article, quantity } of data.articles) {
+        const articleInOrder = new ArticleInOrder();
+        articleInOrder.article = article;
+        articleInOrder.order = order;
+        articleInOrder.quantity = quantity;
+        await articleInOrder.save();
+      }
+    }
+
+  }
 
   static async createOrder(
     articlesInOrder: { articleId: string; quantity: number }[]
@@ -36,9 +69,8 @@ export class Order extends BaseEntity {
         throw new Error(`Article with ID ${articleId} not found.`);
       }
     }
-    
+
     const order = Order.create();
-    order.createdAt = new Date()
     await order.save();
 
     for (const { articleId, quantity } of articlesInOrder) {
@@ -49,11 +81,12 @@ export class Order extends BaseEntity {
       articleInOrder.quantity = quantity;
       await articleInOrder.save();
     }
+
     await order.reload();
     return order;
   }
 
-  public async submitOrder() {
+  async submitOrder() {
     this.submitted = true;
     await this.save();
     sendEmail();
@@ -63,20 +96,20 @@ export class Order extends BaseEntity {
     return this.articlesInOrder.reduce(
       (total, { article, quantity }) => total + article.priceEurCent * quantity,
       0
-    ) ;
-  }  
+    );
+  }
 
   getShippingCost(): number {
-    return this.getTotalPrice() >= 10000 
+    return this.getTotalPrice() >= 10000
       ? 0
       : this.articlesInOrder.reduce(
-          (total, { article, quantity }) =>
-            total +
-            ((article.specialShippingCostEurCent || (article.weightG * 10)) * quantity),
-          0
-        );
+        (total, { article, quantity }) =>
+          total +
+          ((article.specialShippingCostEurCent || (article.weightG * 10)) * quantity),
+        0
+      );
   }
-  
+
 
   getOrderCost(): {
     totalWithoutShipping: number;
