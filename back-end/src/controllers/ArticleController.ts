@@ -1,10 +1,11 @@
 import { Article } from "../Article";
+import { Request } from 'express';
 
 interface ArticlePost {
     name: string;
-    priceEur : number;
-    weightKg: number;
-    specialShippingCost: number;
+    priceEurCent : number;
+    weightG: number;
+    specialShippingCostEurCent: number;
   }
 
 export const createArticle = async (req: Request, res: any) => {
@@ -12,10 +13,10 @@ export const createArticle = async (req: Request, res: any) => {
         const data: ArticlePost = req.body
         const article = new Article
         article.name = data.name;
-        article.priceEur = data.priceEur
-        article.weightKg = data.weightKg
-        if(data.specialShippingCost){
-            article.specialShippingCost = data.specialShippingCost
+        article.priceEurCent = data.priceEurCent
+        article.weightG = data.weightG
+        if(data.specialShippingCostEurCent){
+            article.specialShippingCostEurCent = data.specialShippingCostEurCent
         }
         article.save();
         res.send("Article enregistrés").status(200)

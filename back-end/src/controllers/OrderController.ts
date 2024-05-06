@@ -1,6 +1,7 @@
 import { EqualOperator, FindOneOptions, IsNull } from "typeorm";
 import { ArticleInOrder } from "../ArticleInOrder";
 import { Order } from "../Order";
+import { Request } from 'express';
 
 export const getAllOrder = async (req: Request, res: any) => {
     const order = await Order.find()
