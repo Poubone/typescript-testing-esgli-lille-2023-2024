@@ -1,6 +1,6 @@
 import { Article } from "./Article";
 import { getNewDataSource } from "./config/database";
-import { createArticle } from "./controllers/ArticleController";
+import { createArticle, deleteArticle, getAllArticles, getArticle } from "./controllers/ArticleController";
 
 async function main() {
   const dataSource = await getNewDataSource("./sqlite.db");
@@ -15,11 +15,16 @@ async function main() {
 
   const app = express();
 
+  app.use(express.json());
+
   app.get('/', (req: Request, res: any) => {
     res.send('Hello from the homepage!');
   });
 
-  app.get('/users', createArticle);
+  app.post('/article', createArticle);
+  app.get('/articles', getAllArticles);
+  app.get('/article/:id', getArticle);
+  app.delete('/article/:id', deleteArticle);
 
   const server = http.createServer(app);
 
